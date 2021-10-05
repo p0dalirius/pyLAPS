@@ -4,7 +4,7 @@
   A simple way to read and write LAPS passwords from linux.
 </p>
 
-This script is aPython setter/getter for property ms-Mcs-AdmPwd used by LAPS inspired by @[swisskyrepo](https://github.com/swisskyrepo/)'s [SharpLAPS](https://github.com/swisskyrepo/SharpLAPS) in C#.
+This script is a python setter/getter for property ms-Mcs-AdmPwd used by LAPS inspired by [@swisskyrepo](https://github.com/swisskyrepo/)'s [SharpLAPS](https://github.com/swisskyrepo/SharpLAPS) in C#.
 
 Require (either):
   * Account with `ExtendedRight` or `GenericRead` to get LAPS passwords
