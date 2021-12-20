@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# File name          : pywhisker.py
+# File name          : pyLAPS.py
 # Author             : Podalirius (@podalirius_)
-# Date created       : 29 Jul 2021
+# Date created       : 05 Oct 2021
 
 import argparse
 import os
