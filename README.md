@@ -2,6 +2,11 @@
 
 <p align="center">
   A simple way to read and write LAPS passwords from linux.
+  <br>
+  
+  <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/p0dalirius/pyLAPS">
+  <a href="https://twitter.com/intent/follow?screen_name=podalirius_" title="Follow"><img src="https://img.shields.io/twitter/follow/podalirius_?label=Podalirius&style=social"></a>
+  <br>
 </p>
 
 This script is a python setter/getter for property ms-Mcs-AdmPwd used by LAPS inspired by [@swisskyrepo](https://github.com/swisskyrepo/)'s [SharpLAPS](https://github.com/swisskyrepo/SharpLAPS) in C#.
