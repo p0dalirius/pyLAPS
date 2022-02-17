@@ -69,7 +69,7 @@ authentication & connection:
     ____  __  __/ /   /   |  / __ \/ ___/
    / __ \/ / / / /   / /| | / /_/ /\__ \   
   / /_/ / /_/ / /___/ ___ |/ ____/___/ /   
- / .___/\__, /_____/_/  |_/_/    /____/    v1.1
+ / .___/\__, /_____/_/  |_/_/    /____/    v1.2
 /_/    /____/           @podalirius_           
 
 [+] Extracting LAPS passwords of all computers ...
@@ -88,7 +88,7 @@ authentication & connection:
     ____  __  __/ /   /   |  / __ \/ ___/
    / __ \/ / / / /   / /| | / /_/ /\__ \   
   / /_/ / /_/ / /___/ ___ |/ ____/___/ /   
- / .___/\__, /_____/_/  |_/_/    /____/    v1.1
+ / .___/\__, /_____/_/  |_/_/    /____/    v1.2
 /_/    /____/           @podalirius_           
 
 [+] Extracting LAPS password of computer: PC01$ ...
@@ -107,7 +107,7 @@ When no password is supplied with `--value`, a random password is generated.
     ____  __  __/ /   /   |  / __ \/ ___/
    / __ \/ / / / /   / /| | / /_/ /\__ \   
   / /_/ / /_/ / /___/ ___ |/ ____/___/ /   
- / .___/\__, /_____/_/  |_/_/    /____/    v1.1
+ / .___/\__, /_____/_/  |_/_/    /____/    v1.2
 /_/    /____/           @podalirius_           
 
 [+] Setting LAPS password in LDAP ...
@@ -127,7 +127,7 @@ You can set the value of `ms-Mcs-AdmPwd` on a specific computer with `--value` o
     ____  __  __/ /   /   |  / __ \/ ___/
    / __ \/ / / / /   / /| | / /_/ /\__ \   
   / /_/ / /_/ / /___/ ___ |/ ____/___/ /   
- / .___/\__, /_____/_/  |_/_/    /____/    v1.1
+ / .___/\__, /_____/_/  |_/_/    /____/    v1.2
 /_/    /____/           @podalirius_               
 
 [+] Setting LAPS password in LDAP ...
