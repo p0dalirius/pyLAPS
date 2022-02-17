@@ -245,8 +245,11 @@ class LAPSio(object):
         print("[+] Setting LAPS password in LDAP ... ")
 
         print("[+] Searching for the target computer")
-
-        self.ldap_session.search("DC=LAB,DC=local", '(sAMAccountName=%s)' % escape_filter_chars(sAMAccountName), attributes=['objectSid'])
+        self.ldap_session.search(
+            self.ldap_server.info.other["defaultNamingContext"],
+            '(sAMAccountName=%s)' % escape_filter_chars(sAMAccountName),
+            attributes=['objectSid']
+        )
         dn, sid = None, None
         try:
             dn = self.ldap_session.entries[0].entry_dn
@@ -254,7 +257,7 @@ class LAPSio(object):
         except IndexError:
             print("[!] Computer not found in LDAP: %s" % sAMAccountName)
 
-        if dn == None and sid == None:
+        if dn is None and sid is None:
             print("[!] Target computer does not exist! (wrong domain?)")
         else:
             print("[+] Target computer found: %s" % dn)
@@ -281,11 +284,14 @@ class LAPSio(object):
             pass
 
     def get(self, sAMAccountName='*'):
-        dn = ','.join(["DC=%s" % part for part in self.domain.split('.')])
         if sAMAccountName != '*' and sAMAccountName is not None:
             print("[+] Extracting LAPS password of computer: %s ..." % sAMAccountName)
             print("[+] Searching for the target computer: %s " % sAMAccountName)
-            self.ldap_session.search(dn, '(sAMAccountName=%s)' % escape_filter_chars(sAMAccountName), attributes=['objectSid'])
+            self.ldap_session.search(
+                self.ldap_server.info.other["defaultNamingContext"],
+                '(sAMAccountName=%s)' % escape_filter_chars(sAMAccountName),
+                attributes=['objectSid']
+            )
             dn, sid = None, None
             try:
                 dn = self.ldap_session.entries[0].entry_dn
