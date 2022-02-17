@@ -307,7 +307,11 @@ class LAPSio(object):
             self.ldap_session.search(dn, '(&(objectCategory=computer)(ms-MCS-AdmPwd=*)(sAMAccountName=%s))' % escape_filter_chars(sAMAccountName), attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd'])
         else:
             print("[+] Extracting LAPS passwords of all computers ... ")
-            self.ldap_session.search(dn, '(&(objectCategory=computer)(ms-MCS-AdmPwd=*)(sAMAccountName=*))', attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd'])
+            self.ldap_session.search(
+                self.ldap_server.info.other["defaultNamingContext"],
+                '(&(objectCategory=computer)(ms-MCS-AdmPwd=*)(sAMAccountName=*))',
+                attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd']
+            )
 
         results = []
         for entry in self.ldap_session.response:
