@@ -17,6 +17,7 @@ from impacket.spnego import SPNEGO_NegTokenInit, TypesMech
 from ldap3.utils.conv import escape_filter_chars
 from ldap3.protocol.formatters.formatters import format_sid
 
+
 def get_machine_name(args, domain):
     if args.dc_ip is not None:
         s = SMBConnection(args.dc_ip, args.dc_ip)
@@ -233,9 +234,9 @@ def ldap3_kerberos_login(connection, target, user, password, domain='', lmhash='
     return True
 
 
-class SharpLAPS(object):
+class LAPSio(object):
     def __init__(self, ldap_server, ldap_session, domain):
-        super(SharpLAPS, self).__init__()
+        super(LAPSio, self).__init__()
         self.ldap_server = ldap_server
         self.ldap_session = ldap_session
         self.domain = domain
@@ -292,7 +293,7 @@ class SharpLAPS(object):
             except IndexError:
                 print("[!] Computer not found in LDAP: %s" % sAMAccountName)
 
-            if dn == None and sid == None:
+            if dn is None and sid is None:
                 print("[!] Target computer does not exist! (wrong domain?)")
             else:
                 print("[+] Target computer found: %s" % dn)
@@ -308,29 +309,7 @@ class SharpLAPS(object):
                 continue
             entry = entry["raw_attributes"]
             results.append(entry)
-            print("  | %-15s : %s" % (entry["sAMAccountName"][0].decode('UTF-8'), entry["ms-Mcs-AdmPwd"][0].decode('UTF-8')))
         return results
-
-
-    def get_dn_sid_from_samname(self, samname):
-        self.ldap_session.search(self.domain_dumper.root, '(sAMAccountName=%s)' % escape_filter_chars(samname), attributes=['objectSid'])
-        try:
-            dn = self.ldap_session.entries[0].entry_dn
-            sid = format_sid(self.ldap_session.entries[0]['objectSid'].raw_values[0])
-            return dn, sid
-        except IndexError:
-            print("[!] User not found in LDAP: %s" % samname)
-            return False
-
-    def get_sid_info(self, sid):
-        self.ldap_session.search(self.domain_dumper.root, '(objectSid=%s)' % escape_filter_chars(sid), attributes=['sAMAccountName'])
-        try:
-            dn = self.ldap_session.entries[0].entry_dn
-            samname = self.ldap_session.entries[0]['sAMAccountName']
-            return dn, samname
-        except IndexError:
-            print("[!] SID not found in LDAP: %s" % sid)
-            return False
 
 
 def parse_args():
@@ -341,7 +320,6 @@ def parse_args():
     parser.add_argument("-a", "--action", choices=['get', 'set'], nargs='?', default='get', help='Get or Set the LAPS password')
     parser.add_argument("-c", "--computer", type=str, default=None, required=False, dest="target_computer", help="Target computer to modify")
     parser.add_argument("-v", "--value", type=str, default=None, required=False, dest="target_value", help="New password to set")
-
 
     authconn = parser.add_argument_group('authentication & connection')
     authconn.add_argument('--dc-ip', action='store', metavar="ip address", help='IP Address of the domain controller or KDC (Key Distribution Center) for Kerberos. If omitted it will use the domain part (FQDN) specified in the identity parameter')
@@ -362,11 +340,10 @@ def parse_args():
 
     args = parser.parse_args()
 
-    if (args.action == "set" and args.target_computer is None):
+    if args.action == "set" and args.target_computer is None:
         parser.error("The following arguments are required when setting -action == get: -c/--computer")
 
     return args
-
 
 
 if __name__ == '__main__':
@@ -374,10 +351,9 @@ if __name__ == '__main__':
     ____  __  __/ /   /   |  / __ \/ ___/
    / __ \/ / / / /   / /| | / /_/ /\__ \   
   / /_/ / /_/ / /___/ ___ |/ ____/___/ /   
- / .___/\__, /_____/_/  |_/_/    /____/    v1.1
+ / .___/\__, /_____/_/  |_/_/    /____/    v1.2
 /_/    /____/           @podalirius_           
     """)
-
 
     args = parse_args()
 
@@ -400,11 +376,14 @@ if __name__ == '__main__':
             nthash=auth_nt_hash
         )
 
-        _sharplaps = SharpLAPS(ldap_server, ldap_session, args.auth_domain)
+        _LAPSio = LAPSio(ldap_server, ldap_session, args.auth_domain)
         if args.action == 'set':
-            _sharplaps.set(args.target_computer, args.target_value)
+            _LAPSio.set(args.target_computer, args.target_value)
         elif args.action == 'get':
-            _sharplaps.get(sAMAccountName=args.target_computer)
+            results = _LAPSio.get(sAMAccountName=args.target_computer)
+            results = sorted(results, key=lambda x:x["sAMAccountName"][0].decode('UTF-8'))
+            for r in results:
+                print("  | %-20s : %s" % (r["sAMAccountName"][0].decode('UTF-8'), r["ms-Mcs-AdmPwd"][0].decode('UTF-8')))
 
     except Exception as e:
         if args.debug:

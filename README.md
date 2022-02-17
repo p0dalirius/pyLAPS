@@ -25,7 +25,7 @@ This tool supports many authentication methods:
     ____  __  __/ /   /   |  / __ \/ ___/
    / __ \/ / / / /   / /| | / /_/ /\__ \   
   / /_/ / /_/ / /___/ ___ |/ ____/___/ /   
- / .___/\__, /_____/_/  |_/_/    /____/    v1.1
+ / .___/\__, /_____/_/  |_/_/    /____/    v1.2
 /_/    /____/           @podalirius_           
 
 usage: pyLAPS.py [-h] [--use-ldaps] [-q] [-debug] [-a [{get,set}]] [-c TARGET_COMPUTER] [-v TARGET_VALUE] [--dc-ip ip address] [-d DOMAIN] [-u USER]
