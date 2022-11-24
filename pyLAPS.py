@@ -262,13 +262,16 @@ class LAPSio(object):
         else:
             print("[+] Target computer found: %s" % dn)
 
-        self.ldap_session.search(dn, '(&(objectCategory=computer)(objectClass=*))', attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd'])
-        results = None
-        for entry in self.ldap_session.response:
+        results = list(ldap_session.extend.standard.paged_search(
+            dn,
+            '(&(objectCategory=computer)(objectClass=*))',
+            attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd']
+        ))
+        for entry in results:
             if entry['type'] != 'searchResEntry':
                 continue
             results = entry
-        if not results:
+        if len(results) == 0:
             print("[!] Could not query target computer properties.")
             return
 
@@ -287,15 +290,15 @@ class LAPSio(object):
         if sAMAccountName != '*' and sAMAccountName is not None:
             print("[+] Extracting LAPS password of computer: %s ..." % sAMAccountName)
             print("[+] Searching for the target computer: %s " % sAMAccountName)
-            self.ldap_session.search(
+            results = list(ldap_session.extend.standard.paged_search(
                 self.ldap_server.info.other["defaultNamingContext"],
                 '(sAMAccountName=%s)' % escape_filter_chars(sAMAccountName),
                 attributes=['objectSid']
-            )
+            ))
             dn, sid = None, None
             try:
-                dn = self.ldap_session.entries[0].entry_dn
-                sid = format_sid(self.ldap_session.entries[0]['objectSid'].raw_values[0])
+                dn = results[0].entry_dn
+                sid = format_sid(results[0]['objectSid'].raw_values[0])
             except IndexError:
                 print("[!] Computer not found in LDAP: %s" % sAMAccountName)
 
@@ -304,17 +307,20 @@ class LAPSio(object):
             else:
                 print("[+] Target computer found: %s" % dn)
 
-            self.ldap_session.search(dn, '(&(objectCategory=computer)(ms-MCS-AdmPwd=*)(sAMAccountName=%s))' % escape_filter_chars(sAMAccountName), attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd'])
+            results = list(ldap_session.extend.standard.paged_search(
+                dn,
+                '(&(objectCategory=computer)(ms-MCS-AdmPwd=*)(sAMAccountName=%s))' % escape_filter_chars(sAMAccountName),
+                attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd']
+            ))
         else:
             print("[+] Extracting LAPS passwords of all computers ... ")
-            self.ldap_session.search(
+            results = list(ldap_session.extend.standard.paged_search(
                 self.ldap_server.info.other["defaultNamingContext"],
                 '(&(objectCategory=computer)(ms-MCS-AdmPwd=*)(sAMAccountName=*))',
                 attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd']
-            )
+            ))
 
-        results = []
-        for entry in self.ldap_session.response:
+        for entry in results:
             if entry['type'] != 'searchResEntry':
                 continue
             entry = entry["raw_attributes"]
