@@ -290,15 +290,15 @@ class LAPSio(object):
         if sAMAccountName != '*' and sAMAccountName is not None:
             print("[+] Extracting LAPS password of computer: %s ..." % sAMAccountName)
             print("[+] Searching for the target computer: %s " % sAMAccountName)
-            results = list(ldap_session.extend.standard.paged_search(
+            responses = list(ldap_session.extend.standard.paged_search(
                 self.ldap_server.info.other["defaultNamingContext"],
                 '(sAMAccountName=%s)' % escape_filter_chars(sAMAccountName),
                 attributes=['objectSid']
             ))
             dn, sid = None, None
             try:
-                dn = results[0].entry_dn
-                sid = format_sid(results[0]['objectSid'].raw_values[0])
+                dn = responses[0].entry_dn
+                sid = format_sid(responses[0]['objectSid'].raw_values[0])
             except IndexError:
                 print("[!] Computer not found in LDAP: %s" % sAMAccountName)
 
@@ -307,20 +307,21 @@ class LAPSio(object):
             else:
                 print("[+] Target computer found: %s" % dn)
 
-            results = list(ldap_session.extend.standard.paged_search(
+            responses = list(ldap_session.extend.standard.paged_search(
                 dn,
                 '(&(objectCategory=computer)(ms-MCS-AdmPwd=*)(sAMAccountName=%s))' % escape_filter_chars(sAMAccountName),
                 attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd']
             ))
         else:
             print("[+] Extracting LAPS passwords of all computers ... ")
-            results = list(ldap_session.extend.standard.paged_search(
+            responses = list(ldap_session.extend.standard.paged_search(
                 self.ldap_server.info.other["defaultNamingContext"],
                 '(&(objectCategory=computer)(ms-MCS-AdmPwd=*)(sAMAccountName=*))',
                 attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd']
             ))
 
-        for entry in results:
+        results = []
+        for entry in responses:
             if entry['type'] != 'searchResEntry':
                 continue
             entry = entry["raw_attributes"]
