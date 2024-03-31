@@ -401,7 +401,7 @@ if __name__ == '__main__':
             results = sorted(results, key=lambda x:x["sAMAccountName"][0].decode('UTF-8'))
             for r in results:
                 print("  | %-20s : %s" % (r["sAMAccountName"][0].decode('UTF-8'), r["ms-Mcs-AdmPwd"][0].decode('UTF-8')))
-
+        print("[+] All done!")
     except Exception as e:
         if args.debug:
             traceback.print_exc()
