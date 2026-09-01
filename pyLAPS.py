@@ -262,7 +262,7 @@ class LAPSio(object):
         else:
             print("[+] Target computer found: %s" % dn)
 
-        results = list(ldap_session.extend.standard.paged_search(
+        results = list(self.ldap_session.extend.standard.paged_search(
             dn,
             '(&(objectCategory=computer)(objectClass=*))',
             attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd']
@@ -290,7 +290,7 @@ class LAPSio(object):
         if sAMAccountName != '*' and sAMAccountName is not None:
             print("[+] Extracting LAPS password of computer: %s ..." % sAMAccountName)
             print("[+] Searching for the target computer: %s " % sAMAccountName)
-            responses = list(ldap_session.extend.standard.paged_search(
+            responses = list(self.ldap_session.extend.standard.paged_search(
                 self.ldap_server.info.other["defaultNamingContext"],
                 '(sAMAccountName=%s)' % escape_filter_chars(sAMAccountName),
                 attributes=['objectSid']
@@ -314,14 +314,14 @@ class LAPSio(object):
             else:
                 print("[+] Target computer found: %s" % dn)
 
-            responses = list(ldap_session.extend.standard.paged_search(
+            responses = list(self.ldap_session.extend.standard.paged_search(
                 dn,
                 '(&(objectCategory=computer)(ms-MCS-AdmPwd=*)(sAMAccountName=%s))' % escape_filter_chars(sAMAccountName),
                 attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd']
             ))
         else:
             print("[+] Extracting LAPS passwords of all computers ... ")
-            responses = list(ldap_session.extend.standard.paged_search(
+            responses = list(self.ldap_session.extend.standard.paged_search(
                 self.ldap_server.info.other["defaultNamingContext"],
                 '(&(objectCategory=computer)(ms-MCS-AdmPwd=*)(sAMAccountName=*))',
                 attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd']
