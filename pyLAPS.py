@@ -257,8 +257,9 @@ class LAPSio(object):
         except IndexError:
             print("[!] Computer not found in LDAP: %s" % sAMAccountName)
 
-        if dn is None and sid is None:
+        if dn is None:
             print("[!] Target computer does not exist! (wrong domain?)")
+            return
         else:
             print("[+] Target computer found: %s" % dn)
 
@@ -267,11 +268,8 @@ class LAPSio(object):
             '(&(objectCategory=computer)(objectClass=*))',
             attributes=['sAMAccountName', 'objectSid', 'ms-Mcs-AdmPwd']
         ))
-        for entry in results:
-            if entry['type'] != 'searchResEntry':
-                continue
-            results = entry
-        if len(results) == 0:
+        entries = [entry for entry in results if entry['type'] == 'searchResEntry']
+        if len(entries) == 0:
             print("[!] Could not query target computer properties.")
             return
 
