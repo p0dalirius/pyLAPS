@@ -296,14 +296,21 @@ class LAPSio(object):
                 attributes=['objectSid']
             ))
             dn, sid = None, None
-            try:
-                dn = responses[0].entry_dn
-                sid = format_sid(responses[0]['objectSid'].raw_values[0])
-            except IndexError:
-                print("[!] Computer not found in LDAP: %s" % sAMAccountName)
+            for entry in responses:
+                # paged_search() yields raw response dicts, not Entry objects,
+                # and can also yield searchResRef referrals.
+                if entry['type'] != 'searchResEntry':
+                    continue
+                dn = entry['dn']
+                raw_sid = entry['raw_attributes'].get('objectSid', [])
+                if len(raw_sid) != 0:
+                    sid = format_sid(raw_sid[0])
+                break
 
-            if dn is None and sid is None:
+            if dn is None:
+                print("[!] Computer not found in LDAP: %s" % sAMAccountName)
                 print("[!] Target computer does not exist! (wrong domain?)")
+                return []
             else:
                 print("[+] Target computer found: %s" % dn)
 
